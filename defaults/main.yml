@@ -1,0 +1,9 @@
+---
+
+mogilefs_domains: []
+mogilefs_db_host: "localhost"
+mogilefs_db_password: "mogielfs"
+mogilefs_trackers: "127.0.0.1:6001"
+mogilefs_listener_jobs: ""
+mogilefs_replicate_jobs: ""
+mogilefs_default_mindevcount: ""

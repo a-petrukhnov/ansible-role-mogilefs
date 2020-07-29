@@ -1,0 +1,40 @@
+---
+
+- name: Add MogileFS storage
+  command: mogadm host add mogilestorage --ip=127.0.0.1 --port=7500 --status=alive
+  register: command_result
+  failed_when: "command_result.stderr != '' and command_result.stderr != 'Host already exists.'"
+
+- name: Add MogileFS device to storage
+  command: mogadm device add mogilestorage 1
+  register: command_result
+  failed_when: "command_result.stderr != '' and command_result.stderr != 'Error adding device: existing_devid existing_devid'"
+
+- name: add MogileFs domains
+  command: "mogadm domain add {{ item }}"
+  with_items: "{{ mogilefs_domains }}"
+  register: command_result
+  failed_when: "command_result.stderr != '' and command_result.stderr != 'Error creating domain: domain_exists That domain already exists'"
+
+- name: Create a directory for mogilefs storage
+  file:
+    path: /var/mogdata/dev1
+    state: directory
+    mode: "0755"
+    owner: "{{ mogilefs_user }}"
+    group: "{{ mogilefs_user }}"
+
+- name: Ensure MogileFS storage is configured
+  template:
+    src: mogstored.conf.j2
+    dest: /etc/mogilefs/mogstored.conf
+    mode: "0644"
+    owner: root
+    group: root
+  notify: restart mogstored
+
+- name: Start MogileFS storage
+  service:
+    name: mogstored
+    state: started
+    enabled: yes

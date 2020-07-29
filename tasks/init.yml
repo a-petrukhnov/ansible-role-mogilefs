@@ -1,0 +1,66 @@
+---
+
+- name: Create a directory for mogilefs resources
+  file:
+    path: /var/lib/mogilefs
+    state: directory
+    mode: "0755"
+
+- name: Extract mogilefs packages
+  unarchive:
+    src: mogilefs.tar.gz
+    dest: /var/lib/mogilefs
+    
+- name: Create a directory for mogilefs configs
+  file:
+    path: /etc/mogilefs
+    state: directory
+    mode: "0755"
+
+- name: Create a directory for mogilefs data
+  file:
+    path: /var/mogdata
+    state: directory
+    mode: "0755"
+
+- name: Create mogilefsd init file
+  template:
+    src: mogilefsd.service.j2
+    dest: /etc/systemd/system/mogilefsd.service
+
+- name: Create mogstored init file
+  template:
+    src: mogstored.service.j2
+    dest: /etc/systemd/system/mogstored.service
+
+- name: Ensure group for MogileFS user exists
+  group:
+    name: "{{ mogilefs_user }}"
+    state: present
+
+- name: Add the mogilefs user
+  user:
+    name: "{{ mogilefs_user }}"
+    group: "{{ mogilefs_user }}"
+
+- name: Install utilities
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - perl
+    - perl-Sys-Syslog
+    - perl-Net-Netmask
+    - perl-Net-HTTP
+    - perl-IO-AIO
+    - "{{ mogilefs_repo_path }}/perl-Danga-Socket-1.61-1.noarch.rpm"
+    - "{{ mogilefs_repo_path }}/perl-Perlbal-1.80-1.el7.noarch.rpm"
+    - "{{ mogilefs_repo_path }}/Perlbal-1.80-1.el7.noarch.rpm"
+    - "{{ mogilefs_repo_path }}/perl-MogileFS-Client-1.17-1.el7.noarch.rpm"
+    - "{{ mogilefs_repo_path }}/MogileFS-Server-mogilefsd-2.73-2.el7.noarch.rpm"
+    - "{{ mogilefs_repo_path }}/MogileFS-Utils-2.30-1.el7.noarch.rpm"
+    - "{{ mogilefs_repo_path }}/MogileFS-Server-mogstored-2.73-2.el7.noarch.rpm"
+
+- name: Ensure MogileFS database schema created
+  command: "mogdbsetup --dbhost={{ mogilefs_db_host }} --dbname={{ mogilefs_db_name }} --dbuser={{ mogilefs_db_user }} --dbpassword={{ mogilefs_db_password }} --yes"

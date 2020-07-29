@@ -1,0 +1,16 @@
+---
+
+- name: restart mogilefsd
+  service:
+    name: mogilefsd
+    state: restarted
+    enabled: yes
+    use: service
+  become_user: "{{ mogilefs_user }}"
+
+- name: restart mogstored
+  service:
+    name: mogstored
+    state: restarted
+    enabled: yes
+    use: service

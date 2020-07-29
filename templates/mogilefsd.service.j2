@@ -1,0 +1,14 @@
+[Unit]
+Description=MogileFs-storage
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/mogilefsd
+Restart=on-failure
+RestartSec=10s
+User={{ mogilefs_user }}
+Group={{ mogilefs_user }}
+
+[Install]
+WantedBy=multi-user.target

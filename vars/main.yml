@@ -1,0 +1,6 @@
+---
+
+mogilefs_repo_path: /var/lib/mogilefs/var/repository/mogilefs.7.x86_64/
+mogilefs_user: mogilefs
+mogilefs_db_name: mogilefs
+mogilefs_db_user: mogilefs

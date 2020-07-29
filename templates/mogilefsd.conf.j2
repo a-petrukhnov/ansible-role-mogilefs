@@ -1,0 +1,12 @@
+db_dsn          DBI:mysql:mogilefs:{{ mogilefs_db_host }}
+db_user         mogilefs
+db_pass         {{ mogilefs_db_password }}
+conf_port       6001
+
+{% if mogilefs_listener_jobs %}
+listener_jobs {{ mogilefs_listener_jobs }}
+{% endif %}
+
+{% if mogilefs_replicate_jobs %}
+replicate_jobs {{ mogilefs_replicate_jobs }}
+{% endif %}

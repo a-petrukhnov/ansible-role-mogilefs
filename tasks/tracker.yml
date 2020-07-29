@@ -1,0 +1,31 @@
+---
+
+- name: Ensure MogileFS tracker config exists
+  template:
+    src: mogilefs.conf.j2
+    dest: /root/.mogilefs.conf
+
+- name: Ensure MogileFS tracker is configured
+  template:
+    src: mogilefsd.conf.j2
+    dest: /etc/mogilefs/mogilefsd.conf
+    mode: "0640"
+    owner: "{{ mogilefs_user }}"
+    group: "{{ mogilefs_user }}"
+  notify: restart mogilefsd
+
+- name: Ensure MogileFS tracker limits is configured
+  template:
+    src: mogilefs.limits.conf.j2
+    dest: /etc/security/limits.d/mogilefs.conf
+    mode: "0640"
+    owner: "{{ mogilefs_user }}"
+    group: "{{ mogilefs_user }}"
+  notify: restart mogilefsd
+
+- name: Start MogileFS tracker
+  service:
+    name: mogilefsd
+    state: started
+    enabled: yes
+  become_user: "{{ mogilefs_user }}"

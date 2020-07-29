@@ -1,0 +1,6 @@
+---
+
+# Setup/install tasks.
+- include_tasks: init.yml
+- include_tasks: tracker.yml
+- include_tasks: storage.yml
